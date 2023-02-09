@@ -30,6 +30,8 @@ jobs:
     
     if: github.ref == 'refs/heads/main'
     needs: build-deploy-image
+    environment: PROD
+    
     steps:
     - uses: actions/checkout@main
     
