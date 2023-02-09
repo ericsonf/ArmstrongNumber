@@ -31,7 +31,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: build-deploy-image
     steps:
-    - uses: action/checkout@main
+    - uses: actions/checkout@main
     
     - uses: azure/aks-set-context@v1
       with:
