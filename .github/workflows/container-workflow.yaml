@@ -25,3 +25,33 @@ jobs:
     - run: docker build . -t ${{ env.IMAGE_NAME }}
     - run: docker push ${{ env.IMAGE_NAME }}
     
+  deploy-to-aks:
+    runs-on: ubuntu-latest
+    
+    if: github.ref == 'refs/heads/main'
+    needs: build-deploy-image
+    steps:
+    - uses: action/checkout@main
+    
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.AKS_NAME }}
+        resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+    
+    - uses: azure/k8s-create-secret@v1
+      with:
+        container-registry-url: ${{ env.ACR_LOGON_SERVER }}
+        contaner-registry-username: ${{ secrets.SERVICE_PRINCIPAL_ID }}
+        container_registry-password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD }}
+        secret-name: ${{ secrets.AKS_SECRET }}
+        
+    - uses: azure/k8s-deploy@v1
+      with:
+        manifests: |
+          manifests/deployment.yaml
+          manifests/service.yaml
+        images: |
+          ${{ env.IMAGE_NAME }}
+        imagepullsecrets: |
+          ${{ secrets.AKS_SECRET }}
