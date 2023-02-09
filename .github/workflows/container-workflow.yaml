@@ -42,7 +42,7 @@ jobs:
     - uses: azure/k8s-create-secret@v1
       with:
         container-registry-url: ${{ env.ACR_LOGON_SERVER }}
-        contaner-registry-username: ${{ secrets.SERVICE_PRINCIPAL_ID }}
+        container-registry-username: ${{ secrets.SERVICE_PRINCIPAL_ID }}
         container-registry-password: ${{ secrets.SERVICE_PRINCIPAL_PASSWORD }}
         secret-name: ${{ secrets.AKS_SECRET }}
         
